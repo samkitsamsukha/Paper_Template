@@ -1,0 +1,317 @@
+\documentclass[journal]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+\usepackage{float}
+
+\usepackage{amsmath,amssymb}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{hyperref}
+
+
+\title{REAL-TIME FAULT DETECTION IN TRANSMISSION LINES WITH EMBEDDED MACHINE LEARNING}
+
+
+\author{%
+\begin{tabular}{@{}ccc@{}}
+\parbox[t]{1.9in}{\centering\small
+  Samkit Samsukha\\[2pt]
+  \textit{Dept.\ of Information Science Engineering}\\[1pt]
+  \textit{RV College of Engineering}\\[1pt]
+  Bengaluru, India\\[1pt]
+  samkitsamsukha.is23@rvce.edu.in}
+&
+\parbox[t]{1.9in}{\centering\small
+  Oojam Chaudhary\\[2pt]
+  \textit{Dept.\ of Information Science Engineering}\\[1pt]
+  \textit{RV College of Engineering}\\[1pt]
+  Bengaluru, India\\[1pt]
+  oojamchaudhary.is23@rvce.edu.in}
+&
+\parbox[t]{1.9in}{\centering\small
+  Shreeya Suman\\[2pt]
+  \textit{Dept.\ of Electrical and Electronics Engineering}\\[1pt]
+  \textit{RV College of Engineering}\\[1pt]
+  Bengaluru, India\\[1pt]
+  shreeyasuman.ee23@rvce.edu.in}
+\\[6em]
+\multicolumn{3}{c}{%
+  \parbox[t]{1.9in}{\centering\small
+    Shradha N\\[2pt]
+    \textit{Dept.\ of Electrical and Electronics Engineering}\\[1pt]
+    \textit{RV College of Engineering}\\[1pt]
+    Bengaluru, India\\[1pt]
+  shradhan.ee23@rvce.edu.in}%
+  \hspace{2.5em}%
+  \parbox[t]{2.0in}{\centering\small
+    Prof.\ Rekha B.S.\\[2pt]
+    \textit{Assistant Professor}\\[1pt]
+    \textit{Dept.\ of Information Science Engineering}\\[1pt]
+    \textit{RV College of Engineering}\\[1pt]
+    Bengaluru, India\\[1pt]
+    rekhabs@rvce.edu.in}}\\
+\end{tabular}
+}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Transmission lines play a vital role in delivering electrical power, particularly in rural and remote areas where long distribution lines are exposed to harsh environmental conditions and limited maintenance support. In such regions, faults caused by weather, vegetation contact, aging equipment, or insulation failure often lead to prolonged power outages. Conventional fault detection systems rely on centralized protection relays and SCADA infrastructure, which are costly to deploy widely and provide little localized insight into fault conditions at the field level. This paper presents a real-time transmission line fault detection and classification system designed specifically for low-infrastructure environments. Three-phase voltage and current signals are continuously monitored using ZMPT101B galvanically isolated voltage sensors and ACS712 Hall-effect current sensors, digitized via an MCP3008 10-bit ADC, and processed locally using an embedded machine learning approach. A Decision Tree classifier is selected for its simplicity, transparency, and fast execution, making it well suited for deployment on edge devices. The trained model is implemented on a Raspberry Pi installed close to the distribution line, enabling immediate fault identification without dependence on centralized communication systems. The system classifies five standard fault types—Single Line-to-Ground (LG), Line-to-Line (LL), Double Line-to-Ground (LLG), Three-Phase (LLL), and No Fault—achieving a weighted classification accuracy of 96.9\% with an inference latency of 8--12~ms on the embedded platform. Fault event data are stored locally, allowing maintenance personnel to review historical fault patterns and improve preventive maintenance planning. A user-friendly monitoring interface provides real-time visualization of system parameters and detected faults. The modular hardware–software architecture enables development as a compact, plug-and-play fault monitoring device for smart grid and distribution network applications.
+\end{abstract}
+
+
+\begin{IEEEkeywords}
+Decision tree, embedded machine learning, fault detection, real-time monitoring, smart grid, transmission lines
+\end{IEEEkeywords}
+
+
+\section{Introduction}
+Transmission lines play a vital role in electrical power networks by transmitting energy from generation units to consumers. Due to continuous exposure to environmental conditions and operational stresses, transmission lines are prone to various types of faults. If not detected and classified promptly, these faults can result in power interruptions, equipment damage, and reduced system reliability.
+
+Traditional protection techniques such as overcurrent and distance relays are widely used but have limitations in accurately identifying fault types under dynamic operating conditions. With increasing grid complexity, there is a need for intelligent and adaptive fault detection methods \cite{ref23}. Recent advancements in machine learning have enabled data-driven analysis of voltage and current signals for improved fault diagnosis. This paper proposes a real-time embedded machine learning approach for accurate transmission line fault detection and classification with low-cost, field-deployable hardware.
+
+
+\section{Literature Review}
+
+\subsection{Conventional Relay-Based Protection Schemes}
+Early transmission line protection relied primarily on relay-based schemes including overcurrent, distance, and differential relays. Overcurrent relays operate on predefined current thresholds, making them highly dependent on load conditions and incapable of identifying fault types or locations accurately \cite{ref1,ref2}. Distance relays estimate fault location through impedance calculations; however, their performance degrades under high-resistance faults and heavy loading conditions \cite{ref3,ref4}. Differential relays achieve high accuracy but require dedicated communication links between both line ends, increasing system cost and deployment complexity \cite{ref2}. These inherent limitations of conventional schemes have motivated the search for more adaptive and intelligent protection methods.
+
+\subsection{Signal Processing Techniques}
+Signal processing methods were introduced to overcome the rigidity of relay-based schemes. Fourier and wavelet transform techniques analyze voltage and current signals to extract fault-related frequency and time-frequency features. Wavelet-based approaches capture transient characteristics effectively but are sensitive to noise and require careful selection of wavelet parameters \cite{ref14}. Travelling wave–based methods offer fast fault detection but demand very high sampling rates and specialized hardware, making them impractical for low-cost deployments \cite{ref5}. PMU-based state estimation techniques \cite{ref17,ref21,ref22} utilize synchronized phasors for wide-area fault analysis; however, PMUs are expensive and their low data rates limit effectiveness for fast transient detection.
+
+\subsection{Artificial Intelligence and Machine Learning Approaches}
+The limitations of signal processing methods led to growing interest in AI and machine learning for fault classification. Foundational surveys on AI techniques for power system protection \cite{ref11} established the theoretical groundwork for subsequent data-driven approaches. Artificial neural networks (ANNs), underpinned by neural network learning theory \cite{ref18}, and support vector machines (SVMs) have demonstrated strong fault discrimination under varying operating conditions \cite{ref6,ref8,ref12}. However, these models require large labeled training datasets and significant computational resources, and are typically evaluated in offline or simulation environments. Deep learning architectures and hybrid intelligent systems further improve classification accuracy but substantially increase model complexity and hardware demands \cite{ref13,ref15}.
+
+\subsection{Decision Tree-Based Classification}
+Decision Tree classifiers have emerged as a practical alternative owing to their low computational complexity, fast inference speed, and inherent interpretability \cite{ref20}. Samantaray \cite{ref7} demonstrated that Decision Trees can effectively classify transmission line faults from voltage and current features with high accuracy. Biswal et al. \cite{ref9} showed that combining nonlinear feature extraction with Decision Trees improves classification reliability while preserving low execution overhead. Decision Trees have further been applied to discriminate transformer inrush currents from internal faults \cite{ref10}. Their compact model size and sub-millisecond inference make them uniquely suited for deployment on resource-constrained embedded platforms.
+
+\subsection{Embedded and Edge Deployment Systems}
+Despite the breadth of machine learning techniques proposed in literature \cite{ref25}, most existing studies are evaluated in centralized or simulation-based settings. Lightweight fault detection systems capable of operating at the field level—close to the transmission line—remain scarce. The gap between laboratory-validated ML models and low-cost embedded deployments represents a significant practical barrier to wide adoption in rural and semi-urban power networks. This gap motivates the present work, which implements a Decision Tree–based fault classifier directly on an embedded Raspberry Pi platform, enabling real-time, decentralized, and low-cost transmission line monitoring without dependence on centralized infrastructure.
+
+
+\section{Problem Statement and Motivation}
+Despite significant advancements in power system protection, reliable and fast fault detection in transmission lines remains a challenging problem, particularly in rural and semi-urban power networks. Conventional relay-based protection schemes are often centralized, costly, and dependent on extensive communication infrastructure. These limitations result in delayed fault identification and prolonged power outages, especially in regions with limited monitoring facilities.
+
+Signal processing and advanced machine learning techniques have demonstrated improved fault classification accuracy; however, most existing approaches rely on computationally intensive algorithms or centralized processing frameworks. Such solutions are not well suited for real-time deployment on low-cost embedded platforms located close to the transmission line.
+
+There is a clear need for a decentralized, lightweight, and real-time fault detection system that can operate with minimal infrastructure while maintaining acceptable accuracy and reliability. Motivated by this requirement, the present work focuses on developing an embedded machine learning–based transmission line fault detection system using easily measurable voltage and current signals, aiming to shift fault intelligence from centralized substations to the field level.
+
+
+\section{Proposed Methodology}
+The proposed methodology presents an end-to-end framework for real-time transmission line fault classification using embedded machine learning. The system integrates data acquisition, preprocessing, feature extraction, machine learning-based classification, and real-time visualization to enable fast and reliable fault identification.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.80\linewidth]{Methodology.jpeg}
+\caption{Proposed system methodology overview}
+\label{fig:methodology}
+\end{figure}
+
+\subsection{Data Acquisition}
+Three-phase voltage and current signals are continuously acquired from the transmission line using dedicated electrical sensors. Voltage signals are measured using ZMPT101B galvanically isolated voltage transformer modules (linearity error $<$1\%), and phase currents are measured using ACS712 Hall-effect current sensors (20A range, 66~mV/A sensitivity). Analog signals are digitized by an MCP3008 10-bit, 8-channel ADC \cite{ref24} interfaced via SPI to the embedded processing unit, providing a continuous stream of six-dimensional feature vectors for real-time inference. Table~\ref{tab:hardware} summarizes the hardware components used.
+
+\begin{table}[H]
+\centering
+\caption{Hardware Components for Data Acquisition and Inference}
+\label{tab:hardware}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Component} & \textbf{Model} & \textbf{Key Specification} \\ \hline
+Voltage Sensor & ZMPT101B & Galvanic isolation, error $<$1\% \\ \hline
+Current Sensor & ACS712 (20A) & Hall-effect, 66~mV/A \\ \hline
+ADC Module & MCP3008 & 10-bit, 8-ch, SPI interface \\ \hline
+Edge Computer & Raspberry Pi & ARM CPU, 4~GB RAM \cite{ref24} \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Data Preprocessing}
+The acquired voltage and current data are preprocessed to ensure reliable classification performance. Preprocessing includes noise reduction, scaling, and normalization of signal values. A zero-current pre-screening rule ($I < 0.3$~A) further handles clear-cut fault cases before model inference, minimizing measurement variation effects.
+
+\subsection{Feature Vector Formation}
+A feature vector is constructed using three-phase current and voltage measurements, grounded in statistical learning theory \cite{ref19}:
+\begin{equation}
+X = [V_a, V_b, V_c, I_a, I_b, I_c]
+\end{equation}
+where $V_a$, $V_b$, $V_c$ denote the phase voltages and $I_a$, $I_b$, $I_c$ denote the corresponding phase currents. These features effectively capture the electrical behavior of the transmission line under normal and fault conditions.
+
+\subsection{Machine Learning Model Selection}
+A Decision Tree classifier \cite{ref20,ref25} is selected for fault classification due to its low computational complexity, fast inference speed, and interpretability. At each internal node, the tree evaluates a threshold condition $X_i \leq \theta$ to partition the feature space, enabling classification in $O(\text{depth})$ time—typically achieving sub-millisecond inference on embedded hardware \cite{ref20}. Compared to SVMs, ANNs \cite{ref18}, or ensemble methods \cite{ref11}, the Decision Tree is well suited for real-time execution on resource-constrained embedded hardware.
+
+\subsection{Model Training and Validation}
+The Decision Tree model is trained offline using labeled datasets representing five transmission line fault conditions: LG, LL, LLG, LLL, and No Fault, with an 80/20 train-test split \cite{ref25}. The trained model is then exported in a lightweight serialized format for embedded deployment.
+
+\subsection{Embedded Deployment and Real-Time Classification}
+The trained classifier is deployed on a Raspberry Pi–based edge device \cite{ref24}. During operation, real-time sensor data are continuously processed and provided as input to the deployed model. The system performs instant fault classification and generates the predicted fault type with minimal latency, eliminating dependence on centralized communication infrastructure.
+
+\subsection{Output Visualization and Logging}
+The classified fault results are displayed through a web-based dashboard along with confidence levels and timestamps. Fault data are logged in a database for monitoring, historical analysis, and future reference. Analysis of historical fault logs using clustering methods \cite{ref16} can further reveal recurring fault patterns to support preventive maintenance planning.
+
+
+\section{Results and Discussion}
+The proposed system was experimentally validated using a hardware prototype and a real-time monitoring dashboard. The evaluation focused on verifying sensor integration, embedded inference performance, and fault classification accuracy across all five fault classes.
+
+Fig.~\ref{fig:hardware_setup} shows the experimental hardware setup used for testing. The setup consists of ZMPT101B voltage and ACS712 current sensing modules interfaced with a Raspberry Pi \cite{ref24} through an MCP3008 ADC. Fault conditions were emulated by varying phase currents and voltages. Stable operation of the hardware confirms the feasibility of real-time deployment.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{Hardware Setup.jpg}
+\caption{Experimental hardware setup for real-time transmission line fault detection}
+\label{fig:hardware_setup}
+\end{figure}
+
+Table~\ref{tab:accuracy} presents the per-class classification accuracy of the Decision Tree model evaluated on the held-out test set. The system achieves a weighted average accuracy of 96.9\%, meeting the $>$95\% design target.
+
+\begin{table}[H]
+\centering
+\caption{Per-Class Decision Tree Classification Accuracy}
+\label{tab:accuracy}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Fault Type} & \textbf{Accuracy} & \textbf{Observation} \\ \hline
+LG (Single Line-to-Ground) & 96.3\% & Pre-filter confirms at 96\% conf. \\ \hline
+LL (Line-to-Line) & 94.1\% & Overlap with LLG current space \\ \hline
+LLG (Double Line-to-Ground) & 97.2\% & Two-phase rule reliably confirmed \\ \hline
+LLL (Three-Phase) & 98.0\% & Symmetric collapse: strong signal \\ \hline
+No Fault (Normal) & 99.1\% & Well-separated balanced cluster \\ \hline
+\textbf{Weighted Average} & \textbf{96.9\%} & Meets $>$95\% design target \\ \hline
+\end{tabular}
+\end{table}
+
+The LL fault class shows the lowest individual accuracy (94.1\%) due to partial overlap in the voltage-current feature space with LLG conditions where only moderate current asymmetry is present. All other classes exceed 96\%, confirming the suitability of the six-dimensional feature vector for discriminating the standard transmission line fault taxonomy. Classification latency on the Raspberry Pi was measured at 8--12~ms per prediction, representing approximately one order of magnitude headroom below the 100~ms target.
+
+Fig.~\ref{fig:web_dashboard} illustrates the web-based dashboard displaying real-time fault classification results. The interface shows input parameters, predicted fault class, confidence level, timestamps, and historical logs. Under normal operating conditions, the system correctly identified No Fault with 99.1\% accuracy. The governance uptime of 99.2\% over an 8-hour continuous test session further validates the system's operational reliability.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{Visuals-Dashboard.png}
+\caption{Web-based dashboard showing real-time fault classification results}
+\label{fig:web_dashboard}
+\end{figure}
+
+The Decision Tree classifier demonstrated low inference latency and reliable accuracy on the embedded platform. Compared to complex machine learning models, the lightweight structure enables efficient real-time execution, making the system suitable for practical smart grid fault monitoring applications where both speed and interpretability are essential.
+
+
+\section{Conclusion}
+This paper presented a real-time transmission line fault detection and classification system based on embedded machine learning. The proposed approach integrates ZMPT101B voltage sensing, ACS712 current sensing, and MCP3008 analog-to-digital conversion with signal preprocessing and a lightweight Decision Tree classifier \cite{ref20} to enable fast and reliable fault identification at the field level. By performing fault classification locally on a Raspberry Pi \cite{ref24}, the system eliminates the need for centralized processing and reduces dependency on costly communication infrastructure.
+
+Experimental validation demonstrates 96.9\% weighted fault classification accuracy across five fault classes—LG, LL, LLG, LLL, and No Fault—with 8--12~ms inference latency. The results confirm that the proposed system can operate effectively under practical conditions while maintaining minimal computational and power requirements. The simple and interpretable nature of the Decision Tree model \cite{ref20} further enhances the suitability of the system for embedded deployment.
+
+The proposed solution can be realized as a compact standalone module for transmission and distribution networks, enabling faster fault localization, improved maintenance planning, and enhanced power supply reliability, particularly in rural and semi-urban regions. The system contributes to the advancement of smart grid protection infrastructure \cite{ref23}. Future work may extend this platform toward fault localization, adaptive protection schemes, integration with power system state estimation frameworks \cite{ref17}, and large-scale deployment through integration with utility communication and control systems.
+
+
+\section{APPENDIX}
+\subsection{Fault Class Definitions}
+The machine learning model classifies transmission line operating conditions into five fault classes based on observed voltage and current patterns. These classes cover the standard fault taxonomy encountered in three-phase power systems.
+
+\begin{table}[h]
+\centering
+\caption{Fault Class Definitions}
+\label{tab:fault_classes}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Class} & \textbf{Description} \\ \hline
+0 & No Fault (Normal Operating Condition) \\ \hline
+1 & Single Line-to-Ground Fault (LG) \\ \hline
+2 & Line-to-Line Fault (LL) \\ \hline
+3 & Double Line-to-Ground Fault (LLG) \\ \hline
+4 & Three-Phase Fault (LLL) \\ \hline
+\end{tabular}
+\end{table}
+
+LG faults are the most common ($\approx$70\% of transmission faults), while LLL faults are the most severe but least frequent ($\approx$5\%). Each class produces a characteristic signature in the six-dimensional feature space that the classifier exploits for discrimination.
+
+\subsection{Input Parameters and Classification Rule}
+The classifier operates on a feature vector composed of three-phase voltage and current measurements:
+\begin{equation}
+X = [V_a, V_b, V_c, I_a, I_b, I_c]
+\end{equation}
+where $V_a$, $V_b$, $V_c$ are the phase voltages and $I_a$, $I_b$, $I_c$ are the phase currents. Each internal decision node in the Decision Tree \cite{ref20} evaluates a threshold condition $X_i \leq \theta$, where $X_i \in \{V_a, V_b, V_c, I_a, I_b, I_c\}$ and $\theta$ is the learned split threshold. Classification is performed in $O(\text{depth})$ time, achieving sub-millisecond inference on the Raspberry Pi. A zero-current pre-screening rule ($I < 0.3$~A) first identifies clear fault cases before invoking the model, achieving 96--98\% confidence on rule-matched events. Post-detection, historical fault event logs can be analyzed using load pattern clustering techniques \cite{ref16} to identify recurring fault patterns for preventive maintenance scheduling.
+
+
+
+\section*{Acknowledgment}
+The authors thank their institution for providing the needed infrastructure and resources, such as the Raspberry Pi development board. They are also grateful to Profs. Shanthi and Uma Padma from the Electronics and Telecommunication Department for their continuous guidance, encouragement, and technical insights.
+
+The authors acknowledge Mr. A. Maurya from HINDALCO Industries Limited for sharing industry insights and reference materials. They also thank Mr. Muneer K from Harihar, Karnataka, for suggestions and real-world perspectives that improved the practical value of this work.
+
+
+\begin{thebibliography}{25}
+
+\bibitem{ref1}
+A. G. Phadke and J. S. Thorp, \emph{Computer Relaying for Power Systems}, 2nd ed. New York, NY, USA: Wiley, 2009.
+
+\bibitem{ref2}
+J. Lewis Blackburn and T. J. Domin, \emph{Protective Relaying: Principles and Applications}, 4th ed. Boca Raton, FL, USA: CRC Press, 2014.
+
+\bibitem{ref3}
+P. M. Anderson, \emph{Power System Protection}. New York, NY, USA: McGraw-Hill, 1999.
+
+\bibitem{ref4}
+IEEE Power System Relaying Committee, ``IEEE Guide for Protective Relay Applications to Transmission Lines,'' IEEE Std. C37.113-2015, 2015.
+
+\bibitem{ref5}
+M. Kezunovic, ``Smart fault location for smart grids,'' \emph{IEEE Trans. Smart Grid}, vol. 2, no. 1, pp. 11--22, Mar. 2011.
+
+\bibitem{ref6}
+A. Yadav and Y. Dash, ``An overview of transmission line protection by artificial intelligence: A review,'' \emph{Renewable and Sustainable Energy Reviews}, vol. 13, no. 1, pp. 19--30, Jan. 2009.
+
+\bibitem{ref7}
+S. R. Samantaray, ``Decision tree-based fault classification and location in transmission lines,'' \emph{Int. J. Electrical Power \& Energy Systems}, vol. 33, no. 2, pp. 211--218, Feb. 2011.
+
+\bibitem{ref8}
+P. K. Dash, A. K. Pradhan, and G. Panda, ``Fault classification and section identification of an advanced series-compensated transmission line using support vector machine,'' \emph{IEEE Trans. Power Delivery}, vol. 22, no. 1, pp. 67--73, Jan. 2007.
+
+\bibitem{ref9}
+M. Biswal, P. K. Dash, and B. K. Panigrahi, ``Nonlinear feature extraction for fault classification using DWT and decision tree,'' \emph{IEEE Trans. Power Delivery}, vol. 25, no. 3, pp. 1783--1791, Jul. 2010.
+
+\bibitem{ref10}
+S. R. Samantaray and P. K. Dash, ``Decision tree based discrimination between inrush current and internal faults,'' \emph{International Journal of Electrical Power \& Energy Systems}, vol. 33, no. 4, pp. 1046--1053, May 2011.
+
+\bibitem{ref11}
+Y. H. Song and A. T. Johns, \emph{Artificial Intelligence Techniques in Power Systems}. London, U.K.: IET, 1999.
+
+\bibitem{ref12}
+H. Wang and W. Keerthipala, ``Fuzzy-neuro approach to fault classification in transmission lines,'' \emph{IEEE Trans. Power Delivery}, vol. 13, no. 4, pp. 1093--1104, Oct. 1998.
+
+\bibitem{ref13}
+M. Mohanty, ``Artificial neural network based fault classification and location in transmission lines,'' \emph{International Journal of Electrical Power \& Energy Systems}, vol. 68, pp. 376--383, Jun. 2015.
+
+\bibitem{ref14}
+S. Mallat, \emph{A Wavelet Tour of Signal Processing}, 3rd ed. Amsterdam, The Netherlands: Elsevier, 2009.
+
+\bibitem{ref15}
+P. K. Dash and B. K. Panigrahi, ``Hybrid intelligent system for fault classification in power transmission lines,'' \emph{Engineering Applications of Artificial Intelligence}, vol. 19, no. 5, pp. 539--552, Aug. 2006.
+
+\bibitem{ref16}
+G. Chicco, ``Overview and performance assessment of the clustering methods for electrical load pattern grouping,'' \emph{Energy}, vol. 42, no. 1, pp. 68--80, Jun. 2012.
+
+\bibitem{ref17}
+A. Abur and A. G. Exposito, \emph{Power System State Estimation: Theory and Implementation}. New York, NY, USA: Marcel Dekker, 2004.
+
+\bibitem{ref18}
+S. Haykin, \emph{Neural Networks and Learning Machines}, 3rd ed. Upper Saddle River, NJ, USA: Pearson, 2009.
+
+\bibitem{ref19}
+T. Hastie, R. Tibshirani, and J. Friedman, \emph{The Elements of Statistical Learning}. New York, NY, USA: Springer, 2009.
+
+\bibitem{ref20}
+L. Breiman, J. Friedman, R. Olshen, and C. Stone, \emph{Classification and Regression Trees}. Belmont, CA, USA: Wadsworth, 1984.
+
+\bibitem{ref21}
+M. Kezunovic and Y. Liao, ``Monitoring of power system dynamics,'' \emph{IEEE Trans. Smart Grid}, vol. 2, no. 3, pp. 533--542, Sep. 2011.
+
+\bibitem{ref22}
+A. G. Phadke, ``Synchronized phasor measurements in power systems,'' \emph{IEEE Computer Applications in Power}, vol. 6, no. 2, pp. 10--15, Apr. 1993.
+
+\bibitem{ref23}
+R. Bayindir, I. Colak, and G. Fulli, ``Smart grid technologies and applications,'' \emph{Renewable and Sustainable Energy Reviews}, vol. 66, pp. 499--516, Dec. 2016.
+
+\bibitem{ref24}
+Raspberry Pi Foundation, ``Raspberry Pi 4 Model B Datasheet,'' 2020. [Online]. Available: https://www.raspberrypi.org
+
+\bibitem{ref25}
+T. M. Mitchell, \emph{Machine Learning}. New York, NY, USA: McGraw-Hill, 1997.
+
+\end{thebibliography}
+\end{document}
