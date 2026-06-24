@@ -1,0 +1,5 @@
+      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
+     1500       1    1498      22232  ?         197609   Jun 23 /usr/bin/bash
+     1508    1500    1498      22044  ?         197609   Jun 23 /c/Program Files/nodejs/node
+     2129    2124    2124      20244  ?         197609 21:35:21 /usr/bin/PS
+     2124       1    2124      23936  ?         197609 21:35:21 /usr/bin/bash

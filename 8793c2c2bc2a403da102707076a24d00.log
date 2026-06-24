@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.4)  24 JUN 2026 09:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.4)  24 JUN 2026 21:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -431,27 +431,27 @@ m Files/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-<Methodology.jpeg, id=128, 927.465pt x 509.905pt>
+<Methodology.jpeg, id=129, 927.465pt x 509.905pt>
 File: Methodology.jpeg Graphic file (type jpg)
 <use Methodology.jpeg>
-Package pdftex.def Info: Methodology.jpeg  used on input line 106.
+Package pdftex.def Info: Methodology.jpeg  used on input line 110.
 (pdftex.def)             Requested size: 201.60077pt x 110.8334pt.
  [2 <./Methodology.jpeg>]
-<Hardware Setup.jpg, id=168, 1606.0pt x 1204.5pt>
+<Hardware Setup.jpg, id=171, 1606.0pt x 1204.5pt>
 File: Hardware Setup.jpg Graphic file (type jpg)
 <use Hardware Setup.jpg>
-Package pdftex.def Info: Hardware Setup.jpg  used on input line 158.
+Package pdftex.def Info: Hardware Setup.jpg  used on input line 162.
 (pdftex.def)             Requested size: 226.79846pt x 170.09918pt.
 
-Overfull \hbox (29.66252pt too wide) in paragraph at lines 169--179
+Overfull \hbox (29.66252pt too wide) in paragraph at lines 173--183
  [][] 
  []
 
 [3 <./Hardware Setup.jpg>]
-<Visuals-Dashboard.png, id=184, 1157.82562pt x 645.16031pt>
+<Visuals-Dashboard.png, id=185, 1157.82562pt x 645.16031pt>
 File: Visuals-Dashboard.png Graphic file (type png)
 <use Visuals-Dashboard.png>
-Package pdftex.def Info: Visuals-Dashboard.png  used on input line 187.
+Package pdftex.def Info: Visuals-Dashboard.png  used on input line 191.
 (pdftex.def)             Requested size: 252.0pt x 140.41968pt.
  [4 <./Visuals-Dashboard.png>] [5
 
@@ -468,11 +468,11 @@ t changed.
 Here is how much of TeX's memory you used:
  10796 strings out of 467871
  167339 string characters out of 5428444
- 599507 words of memory out of 5000000
+ 598507 words of memory out of 5000000
  39490 multiletter control sequences out of 15000+600000
  670903 words of font info for 126 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,2090b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,1126b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Progra
 m Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX/fonts/type1
@@ -481,7 +481,7 @@ nts/cm/cmsy10.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:
 /Program Files/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Program Files/MiKTe
 X/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX/fonts/type1/urw/tim
 es/utmri8a.pfb>
-Output written on 8793c2c2bc2a403da102707076a24d00.pdf (5 pages, 891337 bytes).
+Output written on 8793c2c2bc2a403da102707076a24d00.pdf (5 pages, 891334 bytes).
 
 PDF statistics:
  260 PDF objects out of 1000 (max. 8388607)
